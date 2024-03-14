@@ -3,8 +3,21 @@
 """
 Created on Thu Mar  7 16:37:43 2024
 
-@author: yichenhsu
+@author: 
+    yichenhsu
+    Kwok Wing, Tang
+    Atefeh, Arabi
+    Kymecia Alana, Rodrigues
+    Tessa, Mathew
 """
+
+'''
+pip install scikit-learn
+pip install pandas
+pip install matplotlib
+pip install spyder-kernels==2.5.*
+pip install imblearn
+'''
 
 import pandas as pd
 import numpy as np
@@ -56,11 +69,26 @@ for col in fill_nan_cols:
 
 df_g6 = df_g6.drop(columns=to_drop_cols)
 df_g6['ACCLASS'] = np.where(df_g6['ACCLASS'] != 'Fatal', 0, 1)
+df_g6.INVAGE.replace('unknown', np.nan, inplace=True)
 
-#Checking
-columns = list(df_g6.columns)
-data_g6 = count_value(df_g6, columns)
-print(data_g6)
+def age_transform(text):
+    if isinstance(text, str):
+        age_range = text.split(' ')
+        if len(age_range) == 3:
+            return (int(age_range[0]) + int(age_range[2])) / 2
+    return np.nan
+
+df_g6['INVAGE'] = df_g6['INVAGE'].apply(age_transform)
+
+#Add day of week
+dates_column = pd.to_datetime(df_g6['DATE'])
+df_g6['WEEKDAY'] = dates_column.dt.day_name()
+
+#handle time
+bins = [0, 500, 1200, 1700, 2100, 2400]
+names = ['Night', 'Morning', 'Afternoon', 'Evening', 'Night2']
+df_g6['TIMERANGE'] = pd.cut(df_g6['TIME'], bins, labels=names)
+df_g6.TIMERANGE.replace(['Night2'], ['Night'], inplace=True)
 
 '''
 Data Visualization
@@ -86,28 +114,44 @@ plt.xlabel('Fatal Level')
 plt.ylabel('Count')
 plt.title('Involvement Type')
 plt.show()
-#Target columns vs TIME - PENDING
-plt.figure(figsize=(100, 6))
-sns.countplot(data=df, x="TIME", hue="ACCLASS", palette="Set2")
-plt.xlabel('Fatal Level')
+#Target columns vs TIME
+plt.figure(figsize=(10, 6))
+sns.countplot(data=df_g6, x="TIMERANGE", hue="ACCLASS")
+plt.xlabel('TIMERANGE')
 plt.ylabel('Count')
-plt.title('Involvement Type')
+plt.title('TIMERANGE Type')
 plt.show()
+
+'''
+Prepared Data
+'''
+#Checking
+columns = list(df_g6.columns)
+data_g6 = count_value(df_g6, columns)
+print(data_g6)
+
+df_g6 = df_g6.drop(['HOOD_158','NEIGHBOURHOOD_158','HOOD_140','NEIGHBOURHOOD_140'], axis = 1 )
+corr = df_g6.corr(numeric_only=True)['ACCLASS'].sort_values(ascending=False)
+corr.abs().head(50)
+
+target = 'ACCLASS'
+features = ['INVTYPE', 'INVAGE', 'AUTOMOBILE', 'WEEKDAY', 'TIMERANGE', 'LIGHT', 
+            'LATITUDE', 'LONGITUDE', 'DISTRICT', 'VISIBILITY', 'RDSFCOND', 'VEHTYPE']
+
+final_df = df_g6[[target] + features].copy()
+
+print(final_df.info())
 
 
 '''
 Data modelling
 '''
-final_df = df_g6.drop('ACCLASS')
-target = 'ACCLASS'
-
 from sklearn.model_selection import StratifiedShuffleSplit
 sss = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=53)
 
 for train_idx, test_idx in sss.split(final_df, final_df[target]):
     train_set = final_df.iloc[train_idx]
     test_set = final_df.iloc[test_idx]
-
 
 X_train = train_set.drop(target, axis=1)
 y_train = train_set[target].copy()
@@ -125,10 +169,9 @@ numeric_pipe = Pipeline([
     ('scale', StandardScaler())
 
     ])
-cat_features = ['PEDESTRIAN', 'CYCLIST', 'AUTOMOBILE', 'MOTORCYCLE', 'TRUCK', 'TRSN_CITY_VEH', 'PASSENGER', 'SPEEDING', 'AG_DRIV', 'REDLIGHT', 'ALCOHOL', 'DISABILITY']
-cat_features.extend(['VISIBILITY', 'LIGHT', 'RDSFCOND'])
-cat_features.extend(['day_of_week', 'TIMERANGE'])
-cat_features.extend(['INVAGE'])
+
+cat_features = ['INVTYPE','WEEKDAY','TIMERANGE','LIGHT','DISTRICT','VISIBILITY','RDSFCOND','VEHTYPE']
+
 
 cat_pipe = Pipeline([
     ('imputer', SimpleImputer(strategy='most_frequent')),
@@ -159,7 +202,7 @@ from sklearn.utils import resample
 
 ###################
 
-
+'''
 ###################### SMOTE
 from imblearn.over_sampling import SMOTE
 sm = SMOTE(random_state = 2) 
@@ -169,21 +212,24 @@ X_train_SMOTE, y_train_SMOTE = sm.fit_resample(X_train_prepared, y_train.ravel()
 #print(tmp['values'].value_counts())
 ###################
 
+'''
+import warnings
+warnings.filterwarnings('ignore')
 
-
-
-#9.	
-from sklearn.metrics import accuracy_score
 from sklearn.svm import SVC
-#9. set the kernel to linear and set the regularization parameter to C= 0.1
-clf_linear_KwokWing = SVC(kernel='poly', C= 0.1)
-#9. Train an SVM classifier using the training data
-clf_linear_KwokWing.fit(X_train_SMOTE, y_train_SMOTE)
+from sklearn.metrics import accuracy_score, confusion_matrix
+kernels = ['linear', 'rbf', 'poly', 'sigmoid']
 
-#10. Print accuracy score for the model on the training set
-score = clf_linear_KwokWing.score(X_train_SMOTE, y_train_SMOTE)
-print("SVC poly:")
-print("Accuracy Score(Training data): ", score)
+for kernel in kernels:
+    clf = SVC(kernel=kernel, C=0.1 if kernel == 'linear' else 1.0).fit(X_train_prepared, y_train)
+    y_pred_train = clf.predict(X_train_prepared)
+    y_pred_test = clf.predict(X_test_prepared)
+    print(f"Kernel: {kernel} ")
+    print("Accuracy for train data: ", accuracy_score(y_train, y_pred_train))
+    print("Accuracy for test data: ", accuracy_score(y_test, y_pred_test))
+    print("Confusion matrix: \n", confusion_matrix(y_test, y_pred_test))
+    print('\n')
+
 
 #10. Print accuracy score for testing set
 '''
