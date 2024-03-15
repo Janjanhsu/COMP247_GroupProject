@@ -124,6 +124,44 @@ plt.ylabel('Count')
 plt.title('TIMERANGE Type')
 plt.show()
 
+#VEHTYPE vs occurence of accidents
+#Counts occurrences of each unique value in the 'VEHTYPE' column
+vehtype_counts = df_g6['VEHTYPE'].value_counts()
+#Plotting
+plt.figure(figsize=(10, 5))
+sns.barplot(x=vehtype_counts.index, y=vehtype_counts.values, palette="viridis")
+plt.title('Accidents by Vehicle Type')
+plt.xlabel('Vehicle Type')
+plt.ylabel('Number of Accidents')
+plt.xticks(rotation=90)
+plt.show()
+
+#WEEKDAY vs occurence of accidents
+#Counts accidents per day of the week, ensuring days are in the correct order
+weekday_counts = df_g6['WEEKDAY'].value_counts().reindex([
+    'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'
+])
+#Plotting
+plt.figure(figsize=(10, 5))
+sns.barplot(x=weekday_counts.index, y=weekday_counts.values, palette="Blues")
+plt.title('Accidents by Day of the Week')
+plt.xlabel('Day of the Week')
+plt.ylabel('Number of Accidents')
+plt.xticks(rotation=40)
+plt.show()
+
+#LOCCOORD vs occurence of accidents
+#Counts occurrences of each unique value in the LOCCOORD column
+loccoord_counts = df_g6['LOCCOORD'].value_counts()
+#Plotting
+plt.figure(figsize=(9, 5))
+sns.barplot(x=loccoord_counts.index, y=loccoord_counts.values, palette="Spectral")
+plt.title('Accidents by Location Coordinates')
+plt.xlabel('Location')
+plt.ylabel('Number of Accidents')
+plt.xticks(rotation=90)
+plt.show()
+
 '''
 Prepared Data
 '''
