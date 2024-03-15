@@ -123,12 +123,23 @@ plt.xlabel('TIMERANGE')
 plt.ylabel('Count')
 plt.title('TIMERANGE Type')
 plt.show()
+
+'''
+Prepared Data
+'''
+#Checking
+columns = list(df_g6.columns)
+data_g6 = count_value(df_g6, columns)
+print(data_g6)
+
+df_g6 = df_g6.drop(['HOOD_158','NEIGHBOURHOOD_158','HOOD_140','NEIGHBOURHOOD_140'], axis = 1 )
+corr = df_g6.corr(numeric_only=True)['ACCLASS'].sort_values(ascending=False)
+corr.abs().head(50)
+
 ############ Chi-square
 import pandas as pd
 from scipy.stats import chi2_contingency
 import matplotlib.pyplot as plt
-
-# Assuming 'df' is your DataFrame and it has been loaded properly.
 
 # The column to test against others
 column_to_test = "ACCLASS"
@@ -137,8 +148,13 @@ column_to_test = "ACCLASS"
 cols = df_g6.columns #All columns
 num_cols = df_g6._get_numeric_data().columns #Numeric columns
 other_columns = list(set(cols) - set(num_cols)) #Categorical columns
-if "ACCLASS" in other_columns:
-    other_columns.remove("ACCLASS")
+other_columns.extend(['PEDESTRIAN', 'CYCLIST', 'AUTOMOBILE', 'MOTORCYCLE', 'TRUCK', 'TRSN_CITY_VEH', 'PASSENGER', 'SPEEDING', 'AG_DRIV', 'REDLIGHT', 'ALCOHOL', 'DISABILITY', 'MONTH', 'DAY'])
+if "STREET1" in other_columns: other_columns.remove("STREET1")
+if "STREET2" in other_columns: other_columns.remove("STREET2")
+if "INJURY" in other_columns: other_columns.remove("INJURY")
+if "DATE" in other_columns: other_columns.remove("DATE")
+if "ACCLASS" in other_columns: other_columns.remove("ACCLASS")
+
 # Initialize a list to store Chi-square statistics
 chi_square_stats = {}
 
@@ -154,42 +170,33 @@ for col in other_columns:
     chi_square_stats[col] = chi2
     
     # Output the result
-    print(f"Chi-square test between {column_to_test} and {col}:")
-    print(f"Chi-square Statistic: {chi2}, p-value: {p}\n")
+    #print(f"Chi-square test between {column_to_test} and {col}:")
+    #print(f"Chi-square Statistic: {chi2}, p-value: {p}\n")
 
 #sort
 chi_square_stats = dict(sorted(chi_square_stats.items(), key=lambda item: item[1]))
-
 # Plotting the Chi-square statistics
 plt.figure(figsize=(10, 8))
 variables_names =list(chi_square_stats.keys())
 plt.barh(variables_names, chi_square_stats.values(), color='skyblue')
 plt.ylabel('Features')
-plt.xlabel('Chi-square Statistic')
+plt.xlabel('Chi-square statistic')
 plt.title('Chi-square test')
 plt.show()
-#################
 
-'''
-Prepared Data
-'''
-#Checking
-columns = list(df_g6.columns)
-data_g6 = count_value(df_g6, columns)
-print(data_g6)
-
-df_g6 = df_g6.drop(['HOOD_158','NEIGHBOURHOOD_158','HOOD_140','NEIGHBOURHOOD_140'], axis = 1 )
-corr = df_g6.corr(numeric_only=True)['ACCLASS'].sort_values(ascending=False)
-corr.abs().head(50)
+highest_n_items = 15
+chi_square_selected_features = {k: chi_square_stats[k] for k in list(chi_square_stats)[0-highest_n_items:]}
+chi_square_selected_features = list(chi_square_selected_features.keys())
+print(chi_square_selected_features)
 
 target = 'ACCLASS'
-features = ['INVTYPE', 'INVAGE', 'AUTOMOBILE', 'WEEKDAY', 'MONTH', 'DAY', 'TIMERANGE', 'LIGHT', 
-            'LATITUDE', 'LONGITUDE', 'DISTRICT', 'VISIBILITY', 'RDSFCOND', 'VEHTYPE']
+#features = ['INVTYPE', 'INVAGE', 'AUTOMOBILE', 'WEEKDAY', 'MONTH', 'DAY', 'TIMERANGE', 'LIGHT', 
+#            'LATITUDE', 'LONGITUDE', 'DISTRICT', 'VISIBILITY', 'RDSFCOND', 'VEHTYPE']
 
-final_df = df_g6[[target] + features].copy()
+final_df = df_g6[[target] + chi_square_selected_features + ['LATITUDE', 'LONGITUDE', 'INVAGE']].copy()
 
 print(final_df.info())
-
+#################
 
 '''
 Data modelling
@@ -245,7 +252,8 @@ numeric_pipe = Pipeline([
 
     ])
 
-cat_features = ['INVTYPE','WEEKDAY','TIMERANGE','LIGHT','DISTRICT','VISIBILITY','RDSFCOND','VEHTYPE']
+#cat_features = ['INVTYPE','WEEKDAY','TIMERANGE','LIGHT','DISTRICT','VISIBILITY','RDSFCOND','VEHTYPE']
+cat_features = chi_square_selected_features
 cat_pipe = Pipeline([
     ('imputer', SimpleImputer(strategy='most_frequent')),
     ('onehot', OneHotEncoder(handle_unknown='ignore', sparse_output=False).set_output(transform="pandas"))
