@@ -134,8 +134,11 @@ import matplotlib.pyplot as plt
 column_to_test = "ACCLASS"
 
 # List of other columns to test
-other_columns = ['INVTYPE', 'AUTOMOBILE', 'WEEKDAY', 'TIMERANGE', 'LIGHT', 
-            'DISTRICT', 'VISIBILITY', 'RDSFCOND', 'VEHTYPE']
+cols = df_g6.columns #All columns
+num_cols = df_g6._get_numeric_data().columns #Numeric columns
+other_columns = list(set(cols) - set(num_cols)) #Categorical columns
+if "ACCLASS" in other_columns:
+    other_columns.remove("ACCLASS")
 # Initialize a list to store Chi-square statistics
 chi_square_stats = {}
 
@@ -158,7 +161,7 @@ for col in other_columns:
 chi_square_stats = dict(sorted(chi_square_stats.items(), key=lambda item: item[1]))
 
 # Plotting the Chi-square statistics
-plt.figure(figsize=(10, 5))
+plt.figure(figsize=(10, 8))
 variables_names =list(chi_square_stats.keys())
 plt.barh(variables_names, chi_square_stats.values(), color='skyblue')
 plt.ylabel('Features')
@@ -203,6 +206,33 @@ y_train = train_set[target].copy()
 X_test = test_set.drop(target, axis=1)
 y_test = test_set[target].copy()
 
+'''
+Recursive Feature Elimination
+'''
+'''
+from sklearn.feature_selection import RFE
+from sklearn.linear_model import LogisticRegression
+
+# Create a base classifier
+logreg = LogisticRegression()
+
+# Create the RFE object
+rfe = RFE(estimator=logreg, n_features_to_select=10, step=1)
+
+# Fit the RFE object to the training data
+rfe.fit(X_train, y_train)
+
+# Get the column indices selected by RFE
+selected_features = X_train.columns[rfe.support_]
+
+# Print the selected features
+print("Selected features:", selected_features)
+
+# Update the training and testing data with the selected features
+X_train = X_train[:, rfe.support_]
+X_test = X_test[:, rfe.support_]
+'''
+
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.pipeline import Pipeline
@@ -216,11 +246,9 @@ numeric_pipe = Pipeline([
     ])
 
 cat_features = ['INVTYPE','WEEKDAY','TIMERANGE','LIGHT','DISTRICT','VISIBILITY','RDSFCOND','VEHTYPE']
-
-
 cat_pipe = Pipeline([
     ('imputer', SimpleImputer(strategy='most_frequent')),
-    ('onehot', OneHotEncoder(handle_unknown='ignore'))
+    ('onehot', OneHotEncoder(handle_unknown='ignore', sparse_output=False).set_output(transform="pandas"))
     
     ])
 
@@ -241,6 +269,7 @@ X_train_prepared = full_pipeline.fit_transform(X_train)
 #x_train_prepared
 X_test_prepared = full_pipeline.transform(X_test)
 #print(X_train_prepared['ACCLASS'].value_counts())
+
 ##################### Balancing
 
 from sklearn.utils import resample
