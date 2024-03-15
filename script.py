@@ -123,6 +123,49 @@ plt.xlabel('TIMERANGE')
 plt.ylabel('Count')
 plt.title('TIMERANGE Type')
 plt.show()
+############ Chi-square
+import pandas as pd
+from scipy.stats import chi2_contingency
+import matplotlib.pyplot as plt
+
+# Assuming 'df' is your DataFrame and it has been loaded properly.
+
+# The column to test against others
+column_to_test = "ACCLASS"
+
+# List of other columns to test
+other_columns = ['INVTYPE', 'AUTOMOBILE', 'WEEKDAY', 'TIMERANGE', 'LIGHT', 
+            'DISTRICT', 'VISIBILITY', 'RDSFCOND', 'VEHTYPE']
+# Initialize a list to store Chi-square statistics
+chi_square_stats = {}
+
+# Perform Chi-square test for 'ACCLASS' against each of the other columns
+for col in other_columns:
+    # Create a contingency table
+    contingency_table = pd.crosstab(df_g6[column_to_test], df_g6[col])
+    
+    # Perform the Chi-square test
+    chi2, p, dof, expected = chi2_contingency(contingency_table)
+    
+    # Store the Chi-square statistic
+    chi_square_stats[col] = chi2
+    
+    # Output the result
+    print(f"Chi-square test between {column_to_test} and {col}:")
+    print(f"Chi-square Statistic: {chi2}, p-value: {p}\n")
+
+#sort
+chi_square_stats = dict(sorted(chi_square_stats.items(), key=lambda item: item[1]))
+
+# Plotting the Chi-square statistics
+plt.figure(figsize=(10, 5))
+variables_names =list(chi_square_stats.keys())
+plt.barh(variables_names, chi_square_stats.values(), color='skyblue')
+plt.ylabel('Features')
+plt.xlabel('Chi-square Statistic')
+plt.title('Chi-square test')
+plt.show()
+#################
 
 '''
 Prepared Data
