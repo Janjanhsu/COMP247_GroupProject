@@ -83,6 +83,8 @@ df_g6['INVAGE'] = df_g6['INVAGE'].apply(age_transform)
 #Add day of week
 dates_column = pd.to_datetime(df_g6['DATE'])
 df_g6['WEEKDAY'] = dates_column.dt.day_name()
+df_g6['MONTH'] = pd.to_datetime(df_g6['DATE']).dt.month
+df_g6['DAY'] = pd.to_datetime(df_g6['DATE']).dt.day
 
 #handle time
 bins = [0, 500, 1200, 1700, 2100, 2400]
@@ -135,7 +137,7 @@ corr = df_g6.corr(numeric_only=True)['ACCLASS'].sort_values(ascending=False)
 corr.abs().head(50)
 
 target = 'ACCLASS'
-features = ['INVTYPE', 'INVAGE', 'AUTOMOBILE', 'WEEKDAY', 'TIMERANGE', 'LIGHT', 
+features = ['INVTYPE', 'INVAGE', 'AUTOMOBILE', 'WEEKDAY', 'MONTH', 'DAY', 'TIMERANGE', 'LIGHT', 
             'LATITUDE', 'LONGITUDE', 'DISTRICT', 'VISIBILITY', 'RDSFCOND', 'VEHTYPE']
 
 final_df = df_g6[[target] + features].copy()
@@ -163,7 +165,7 @@ from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 
-numeric_features = []
+numeric_features = ['INVAGE']
 numeric_pipe = Pipeline([
     ('imputer', SimpleImputer(strategy='median')),
     ('scale', StandardScaler())
@@ -202,17 +204,15 @@ from sklearn.utils import resample
 
 ###################
 
-'''
+
 ###################### SMOTE
 from imblearn.over_sampling import SMOTE
 sm = SMOTE(random_state = 2) 
 X_train_SMOTE, y_train_SMOTE = sm.fit_resample(X_train_prepared, y_train.ravel()) 
 
-#tmp = pd.DataFrame ({'values': y_train_res})
-#print(tmp['values'].value_counts())
 ###################
 
-'''
+
 import warnings
 warnings.filterwarnings('ignore')
 
