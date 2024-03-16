@@ -162,6 +162,9 @@ plt.ylabel('Number of Accidents')
 plt.xticks(rotation=90)
 plt.show()
 
+
+
+
 '''
 Prepared Data
 '''
@@ -234,6 +237,36 @@ target = 'ACCLASS'
 final_df = df_g6[[target] + chi_square_selected_features + ['LATITUDE', 'LONGITUDE', 'INVAGE']].copy()
 
 print(final_df.info())
+
+
+# Visualize the relationship between "RDSFCOND" (road surface condition) and the target variable "ACCLASS"
+plt.figure(figsize=(10, 6))
+sns.countplot(data=final_df, x="RDSFCOND", hue="ACCLASS")
+plt.xlabel('Road Surface Condition')
+plt.ylabel('Count')
+plt.title('Road Surface Condition vs. Fatal Level')
+plt.xticks(rotation=55)
+plt.show()
+
+
+# Visualize the relationship between "LIGHT" (light condition) and the target variable "ACCLASS"
+plt.figure(figsize=(10, 6))
+sns.countplot(data=final_df, x="LIGHT", hue="ACCLASS")
+
+plt.xlabel('Light Condition')
+plt.ylabel('Count')
+plt.title('Light Condition vs. Fatal Level')
+plt.xticks(rotation=55)
+plt.show()
+
+
+
+# Visualize the relationship between "INVAGE" (age of involved party) and the target variable "ACCLASS"
+plt.figure(figsize=(10, 6))
+sns.histplot(data=final_df, x="INVAGE", hue="ACCLASS", bins=20, kde=True)
+plt.xlabel('Age of Involved Party')
+plt.ylabel('Count')
+plt.title('Age of Involved Party vs. Fatal Level')
 #################
 
 '''
