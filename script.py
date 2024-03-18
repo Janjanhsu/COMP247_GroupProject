@@ -162,7 +162,32 @@ plt.ylabel('Number of Accidents')
 plt.xticks(rotation=90)
 plt.show()
 
+# Visualize the relationship between "RDSFCOND" (road surface condition) and the target variable "ACCLASS"
+plt.figure(figsize=(10, 6))
+sns.countplot(data=df_g6, x="RDSFCOND", hue="ACCLASS")
+plt.xlabel('Road Surface Condition')
+plt.ylabel('Count')
+plt.title('Road Surface Condition vs. Fatal Level')
+plt.xticks(rotation=55)
+plt.show()
 
+
+# Visualize the relationship between "LIGHT" (light condition) and the target variable "ACCLASS"
+plt.figure(figsize=(10, 6))
+sns.countplot(data=df_g6, x="LIGHT", hue="ACCLASS")
+
+plt.xlabel('Light Condition')
+plt.ylabel('Count')
+plt.title('Light Condition vs. Fatal Level')
+plt.xticks(rotation=55)
+plt.show()
+
+# Visualize the relationship between "INVAGE" (age of involved party) and the target variable "ACCLASS"
+plt.figure(figsize=(10, 6))
+sns.histplot(data=df_g6, x="INVAGE", hue="ACCLASS", bins=20, kde=True)
+plt.xlabel('Age of Involved Party')
+plt.ylabel('Count')
+plt.title('Age of Involved Party vs. Fatal Level')
 
 
 '''
@@ -237,36 +262,6 @@ target = 'ACCLASS'
 final_df = df_g6[[target] + chi_square_selected_features + ['LATITUDE', 'LONGITUDE', 'INVAGE']].copy()
 
 print(final_df.info())
-
-
-# Visualize the relationship between "RDSFCOND" (road surface condition) and the target variable "ACCLASS"
-plt.figure(figsize=(10, 6))
-sns.countplot(data=final_df, x="RDSFCOND", hue="ACCLASS")
-plt.xlabel('Road Surface Condition')
-plt.ylabel('Count')
-plt.title('Road Surface Condition vs. Fatal Level')
-plt.xticks(rotation=55)
-plt.show()
-
-
-# Visualize the relationship between "LIGHT" (light condition) and the target variable "ACCLASS"
-plt.figure(figsize=(10, 6))
-sns.countplot(data=final_df, x="LIGHT", hue="ACCLASS")
-
-plt.xlabel('Light Condition')
-plt.ylabel('Count')
-plt.title('Light Condition vs. Fatal Level')
-plt.xticks(rotation=55)
-plt.show()
-
-
-
-# Visualize the relationship between "INVAGE" (age of involved party) and the target variable "ACCLASS"
-plt.figure(figsize=(10, 6))
-sns.histplot(data=final_df, x="INVAGE", hue="ACCLASS", bins=20, kde=True)
-plt.xlabel('Age of Involved Party')
-plt.ylabel('Count')
-plt.title('Age of Involved Party vs. Fatal Level')
 #################
 
 '''
@@ -283,33 +278,6 @@ X_train = train_set.drop(target, axis=1)
 y_train = train_set[target].copy()
 X_test = test_set.drop(target, axis=1)
 y_test = test_set[target].copy()
-
-'''
-Recursive Feature Elimination
-'''
-'''
-from sklearn.feature_selection import RFE
-from sklearn.linear_model import LogisticRegression
-
-# Create a base classifier
-logreg = LogisticRegression()
-
-# Create the RFE object
-rfe = RFE(estimator=logreg, n_features_to_select=10, step=1)
-
-# Fit the RFE object to the training data
-rfe.fit(X_train, y_train)
-
-# Get the column indices selected by RFE
-selected_features = X_train.columns[rfe.support_]
-
-# Print the selected features
-print("Selected features:", selected_features)
-
-# Update the training and testing data with the selected features
-X_train = X_train[:, rfe.support_]
-X_test = X_test[:, rfe.support_]
-'''
 
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
@@ -348,12 +316,6 @@ X_train_prepared = full_pipeline.fit_transform(X_train)
 #x_train_prepared
 X_test_prepared = full_pipeline.transform(X_test)
 #print(X_train_prepared['ACCLASS'].value_counts())
-
-##################### Balancing
-
-from sklearn.utils import resample
-
-###################
 
 
 ###################### SMOTE
