@@ -311,18 +311,23 @@ full_pipeline = Pipeline([
     ('preprocessor', preprocessor)
     
     ])
-#print(X_train['ACCLASS'].value_counts())
+
 X_train_prepared = full_pipeline.fit_transform(X_train)
-#x_train_prepared
 X_test_prepared = full_pipeline.transform(X_test)
 #print(X_train_prepared['ACCLASS'].value_counts())
 
-
 ###################### SMOTE
+smote_df = pd.Series(y_train)
+print("Before SMOTE: ")
+print("Fatal: ", smote_df.value_counts()[1])
+print("Non-Fatal: ", smote_df.value_counts()[0])
 from imblearn.over_sampling import SMOTE
 sm = SMOTE(random_state = 2) 
 X_train_SMOTE, y_train_SMOTE = sm.fit_resample(X_train_prepared, y_train.ravel()) 
-
+smote_df = pd.Series(y_train_SMOTE)
+print("After SMOTE: ")
+print("Fatal: ", smote_df.value_counts()[1])
+print("Non-Fatal: ", smote_df.value_counts()[0])
 ###################
 
 
