@@ -98,6 +98,10 @@ Data Visualization
 def split_time(text):
     return text.split(' ')[0]
 
+t_num_cols = ['X', 'Y', 'INDEX_', 'ACCNUM', 'YEAR', 'TIME', 'WARDNUM', 'LATITUDE', 'LONGITUDE', 'FATAL_NO', 'ObjectId']
+df[t_num_cols].hist(bins=30, figsize=(15,10))
+plt.show()
+
 #Correlation Matrix
 #if it is 1, they are duplicate columns
 df['TARGET'] = np.where(df['ACCLASS'] != 'Fatal', 0, 1)
@@ -250,7 +254,7 @@ plt.xlabel('Chi-square statistic')
 plt.title('Chi-square test')
 plt.show()
 
-highest_n_items = 15
+highest_n_items = 13
 chi_square_selected_features = {k: chi_square_stats[k] for k in list(chi_square_stats)[0-highest_n_items:]}
 chi_square_selected_features = list(chi_square_selected_features.keys())
 print(chi_square_selected_features)
