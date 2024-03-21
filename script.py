@@ -193,6 +193,38 @@ plt.xlabel('Age of Involved Party')
 plt.ylabel('Count')
 plt.title('Age of Involved Party vs. Fatal Level')
 
+############################################
+#Kym
+
+# Visualization for Relationship between Numerical feature LATITUDE AND TARGET
+plt.figure(figsize=(10, 6))
+sns.countplot(data=df_g6, x="LATITUDE", hue="ACCLASS")
+plt.xlabel('Latitude')
+plt.ylabel('ACCLASS')
+plt.title('LATITUDE vs. Fatal Level')
+plt.xticks(rotation=55)
+plt.show()
+
+#Year - Accidents in different years
+
+# Visualize the relationship between YEAR and the target variable "ACCLASS"
+plt.figure(figsize=(10, 6))
+sns.countplot(data=df_g6, x="YEAR", hue="ACCLASS")
+
+
+
+#Months - Accidents in different months
+the_months = df_g6['MONTH'].value_counts().reindex([
+    'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
+])
+#Plotting
+plt.figure(figsize=(10, 6))
+sns.barplot(x=the_months.index, y=the_months.values, palette="Blues")
+plt.title('Accidents that occured by month')
+plt.xlabel('Month of the year')
+plt.ylabel('Number of Accidents')
+plt.xticks(rotation=40)
+plt.show()
 
 '''
 Prepared Data
