@@ -254,7 +254,7 @@ plt.xlabel('Chi-square statistic')
 plt.title('Chi-square test')
 plt.show()
 
-highest_n_items = 13
+highest_n_items = 12
 chi_square_selected_features = {k: chi_square_stats[k] for k in list(chi_square_stats)[0-highest_n_items:]}
 chi_square_selected_features = list(chi_square_selected_features.keys())
 print(chi_square_selected_features)
@@ -265,6 +265,7 @@ target = 'ACCLASS'
 
 final_df = df_g6[[target] + chi_square_selected_features + ['LATITUDE', 'LONGITUDE', 'INVAGE']].copy()
 
+print("Selected features: ")
 print(final_df.info())
 #################
 
