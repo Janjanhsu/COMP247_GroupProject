@@ -24,6 +24,8 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import warnings
+warnings.filterwarnings('ignore')
 
 '''
 Data Exploration
@@ -130,7 +132,7 @@ plt.show()
 
 #VEHTYPE vs occurence of accidents
 plt.figure(figsize=(10, 5))
-sns.countplot(data = df_g6, x="VEHTYPE", hue="ACCLASS", palette="viridis")
+sns.countplot(data = df, x="VEHTYPE", hue="ACCLASS", palette="viridis")
 plt.title('Accidents by Vehicle Type')
 plt.xlabel('Vehicle Type')
 plt.ylabel('Number of Accidents')
@@ -150,7 +152,6 @@ plt.ylabel('Number of Accidents')
 plt.xticks(rotation=40)
 plt.show()
 
-
 #LOCCOORD vs occurence of accidents
 plt.figure(figsize=(9, 5))
 sns.countplot(data = df, x="LOCCOORD", hue="ACCLASS", palette="Set1")
@@ -159,7 +160,6 @@ plt.xlabel('Location')
 plt.ylabel('Number of Accidents')
 plt.xticks(rotation=90)
 plt.show()
-
 
 # Visualize the relationship between "RDSFCOND" (road surface condition) and the target variable "ACCLASS"
 plt.figure(figsize=(10, 6))
@@ -341,7 +341,7 @@ from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 
-numeric_features = ['INVAGE']
+numeric_features = ['INVAGE','LATITUDE', 'LONGITUDE']
 numeric_pipe = Pipeline([
     ('imputer', SimpleImputer(strategy='median')),
     ('scale', StandardScaler())
