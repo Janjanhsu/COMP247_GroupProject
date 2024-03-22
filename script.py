@@ -17,6 +17,7 @@ pip install pandas
 pip install matplotlib
 pip install spyder-kernels==2.5.*
 pip install imblearn
+pip install geopandas shapely
 '''
 
 import pandas as pd
