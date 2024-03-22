@@ -163,7 +163,7 @@ plt.show()
 
 # Visualize the relationship between "RDSFCOND" (road surface condition) and the target variable "ACCLASS"
 plt.figure(figsize=(10, 6))
-sns.countplot(data=df_g6, x="RDSFCOND", hue="ACCLASS")
+sns.countplot(data=df, x="RDSFCOND", hue="ACCLASS")
 plt.xlabel('Road Surface Condition')
 plt.ylabel('Count')
 plt.title('Road Surface Condition vs. Fatal Level')
@@ -173,7 +173,7 @@ plt.show()
 
 # Visualize the relationship between "LIGHT" (light condition) and the target variable "ACCLASS"
 plt.figure(figsize=(10, 6))
-sns.countplot(data=df_g6, x="LIGHT", hue="ACCLASS")
+sns.countplot(data=df, x="LIGHT", hue="ACCLASS")
 
 plt.xlabel('Light Condition')
 plt.ylabel('Count')
@@ -227,13 +227,10 @@ plt.title('Fatal accidents')
 plt.show()
 
 #Year - Accidents in different years
-
 # Visualize the relationship between YEAR and the target variable "ACCLASS"
 plt.figure(figsize=(10, 6))
 plt.title('Accidents that occurred by year')
-sns.countplot(data=df_g6, x="YEAR", hue="ACCLASS")
-
-
+sns.countplot(data=df, x="YEAR", hue="ACCLASS")
 
 #Months - Accidents in different months
 the_months = df_g6['MONTH'].value_counts()
@@ -241,7 +238,6 @@ the_months = the_months.sort_index(axis=0)
 the_months.index = [
     'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
 ]
-#Plotting
 plt.figure(figsize=(10, 6))
 sns.barplot(x=the_months.index, y=the_months.values, palette="Blues")
 plt.title('Accidents that occurred by month')
