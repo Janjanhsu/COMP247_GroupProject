@@ -138,12 +138,12 @@ plt.xticks(rotation=90)
 plt.show()
 
 #WEEKDAY vs occurence of accidents
-weekday_reindex = [
+weekday_ordered = [
     'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'
 ]
 
 plt.figure(figsize=(10, 5))
-sns.countplot(data = df_g6, x='WEEKDAY', hue="ACCLASS", palette="Blues", order= weekday_reindex)
+sns.countplot(data = df_g6, x='WEEKDAY', hue="ACCLASS", palette="Blues", order= weekday_ordered)
 plt.title('Accidents by Day of the Week')
 plt.xlabel('Day of the Week')
 plt.ylabel('Number of Accidents')
