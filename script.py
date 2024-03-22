@@ -153,7 +153,7 @@ plt.show()
 
 #LOCCOORD vs occurence of accidents
 plt.figure(figsize=(9, 5))
-sns.countplot(data = df_g6, x="LOCCOORD", hue="ACCLASS", palette="Spectral")
+sns.countplot(data = df, x="LOCCOORD", hue="ACCLASS", palette="Set1")
 plt.title('Accidents by Location Coordinates')
 plt.xlabel('Location')
 plt.ylabel('Number of Accidents')
