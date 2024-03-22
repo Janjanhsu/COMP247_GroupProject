@@ -202,6 +202,30 @@ plt.xticks(rotation=55)
 plt.show()
 '''
 
+myadd = df_g6[['LATITUDE', 'LONGITUDE', 'ACCLASS']]
+myadd2 = myadd[myadd.ACCLASS == 1]
+#fig = px.scatter_geo(df,lat='LATITUDE',lon='LONGITUDE')
+#fig.update_layout(title = 'World map', title_x=0.5)
+#fig.show()
+import pandas as pd
+import geopandas as gpd
+from shapely.geometry import Point
+from geopandas import GeoDataFrame
+
+geometry = [Point(xy) for xy in zip(myadd['LONGITUDE'], myadd['LATITUDE'])]
+gdf = GeoDataFrame(myadd, geometry=geometry)
+geometry2 = [Point(xy) for xy in zip(myadd2['LONGITUDE'], myadd2['LATITUDE'])]
+gdf2 = GeoDataFrame(myadd2, geometry=geometry2)
+
+# Load a simple map that goes with geopandas
+map1 = gpd.read_file("NEIGHBORHOODS_WGS84_2.shp")
+
+# Plot the points on the map
+#gdf.plot(ax=map1.plot(figsize=(10, 6)), marker='o', color='orange', markersize=2)
+gdf2.plot(ax=map1.plot(figsize=(10, 6)), marker='o', color='red', markersize=2)
+plt.title('Fatal accidents')
+plt.show()
+
 #Year - Accidents in different years
 
 # Visualize the relationship between YEAR and the target variable "ACCLASS"
