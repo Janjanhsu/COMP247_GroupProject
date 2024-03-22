@@ -86,19 +86,11 @@ dates_column = pd.to_datetime(df_g6['DATE'])
 df_g6['WEEKDAY'] = dates_column.dt.day_name()
 df_g6['MONTH'] = pd.to_datetime(df_g6['DATE']).dt.month
 df_g6['DAY'] = pd.to_datetime(df_g6['DATE']).dt.day
-
-#handle time
-bins = [0, 500, 1200, 1700, 2100, 2400]
-names = ['Night', 'Morning', 'Afternoon', 'Evening', 'Night2']
-df_g6['TIMERANGE'] = pd.cut(df_g6['TIME'], bins, labels=names)
-df_g6.TIMERANGE.replace(['Night2'], ['Night'], inplace=True)
+print(df_g6.iloc[:, -3:])
 
 '''
 Data Visualization
 '''
-def split_time(text):
-    return text.split(' ')[0]
-
 t_num_cols = ['X', 'Y', 'INDEX_', 'ACCNUM', 'YEAR', 'TIME', 'WARDNUM', 'LATITUDE', 'LONGITUDE', 'FATAL_NO', 'ObjectId']
 df[t_num_cols].hist(bins=30, figsize=(15,10))
 plt.show()
@@ -122,11 +114,18 @@ plt.ylabel('Count')
 plt.title('Involvement Type')
 plt.show()
 #Target columns vs TIME
-plt.figure(figsize=(10, 6))
-sns.countplot(data=df_g6, x="TIMERANGE", hue="ACCLASS")
-plt.xlabel('TIMERANGE')
-plt.ylabel('Count')
-plt.title('TIMERANGE Type')
+df['FATAL'] = np.where(df['ACCLASS'] != 'Fatal', 0, 1)
+df['TIMEHOUR'] = df['TIME'] // 100
+
+# Grouping by TIMEHOUR and calculating number of accidents and number of persons died in accidents
+n_accident_per_hour = df.groupby('TIMEHOUR')['ACCNUM'].nunique()
+n_fatal_case_per_hour = df.groupby('TIMEHOUR')['FATAL'].sum()
+
+result = pd.DataFrame({
+        'No. of accidents occurred': n_accident_per_hour, 
+        'No. of persons died in accidents': n_fatal_case_per_hour
+    }) 
+result.plot.bar(xlabel='Time (hour)')
 plt.show()
 
 #VEHTYPE vs occurence of accidents
