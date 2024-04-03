@@ -18,6 +18,8 @@ pip install matplotlib
 pip install spyder-kernels==2.5.*
 pip install imblearn
 pip install geopandas shapely
+pip install seaborn
+pip install tabulate
 '''
 
 import pandas as pd
@@ -405,48 +407,89 @@ for kernel in kernels:
     print("Confusion matrix: \n", confusion_matrix(y_test, y_pred_test))
     print('\n')
 
-
-#10. Print accuracy score for testing set
-'''
-y_pred = clf_linear_KwokWing.predict(X_test_prepared)
-acc = accuracy_score(X_test_prepared, y_pred)
-print("Accuracy Score(Testing data): ", acc)
-
-
-#11. Generate the accuracy matrix.
-import seaborn as sns
-from sklearn.metrics import confusion_matrix
-cm = confusion_matrix(y_test, y_pred)
-print(f"Confusion Matrix: \n{cm}")
-plt.title('Confusion Matrix - Kernel: Linear', fontsize = 15)
-sns.heatmap(cm, annot = True)
-plt.show()
-'''
 #############################
 
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import roc_auc_score
-# Separate input features (X) and target variable (y)
-#y = df.balance
-#X = df.drop('balance', axis=1)
- 
-# Train model
-clf_4 = RandomForestClassifier(random_state=123)
-clf_4.fit(X_train_SMOTE, y_train_SMOTE)
- 
-# Predict on training set
-pred_y_4 = clf_4.predict(X_test_prepared)
- 
-# Is our model still predicting just one class?
-print( np.unique( pred_y_4 ) )
-# [0 1]
- 
-# How's our accuracy?
-print( accuracy_score(y_test, pred_y_4) )
-# 1.0
- 
-# What about AUROC?
-#prob_y_4 = clf_4.predict_proba(X_test)
-#prob_y_4 = [p[1] for p in prob_y_4]
-#print( roc_auc_score(y_test, prob_y_4) )
 
+# Train model
+forestClf = RandomForestClassifier(random_state=123)
+forestClf.fit(X_train_SMOTE, y_train_SMOTE)
+
+y_forest_pred_test = forestClf.predict(X_test_prepared)
+ 
+print("Model: Random Forest ")
+print("Accuracy for test data: ", accuracy_score(y_test, y_forest_pred_test))
+
+cm = confusion_matrix(y_test, y_forest_pred_test)
+print(f"Confusion Matrix: \n{cm}")
+
+###Randomized Search
+from sklearn.metrics import precision_score, recall_score, f1_score, roc_auc_score, roc_curve
+from sklearn.tree import DecisionTreeClassifier
+parameters=[
+    {
+        'clf': SVC(),
+        'name':'SVM',
+        'C': [0.001],
+        'kernel': ['poly'],
+        'gamma':[1]
+    },
+    {
+        'clf': RandomForestClassifier(),
+        'name':'Random Forest',
+        'n_estimators': [200, 500],
+        'criterion': ['gini','entropy'],
+        'max_features': ['auto', 'sqrt', 'log2'],
+        'max_depth' : [4,5,6,7,8]
+    }
+]
+
+from sklearn.model_selection import RandomizedSearchCV
+def plot_roc_curve(true_y, y_prob, name):
+    fpr, tpr, thresholds = roc_curve(true_y, y_prob)
+    plt.plot(fpr, tpr, label=name)
+    plt.title("ROC Curves")
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.legend(loc='lower right')
+
+def runRandomizedSearch(clf, parameters):
+    randSearch = RandomizedSearchCV(estimator=clf,
+                        scoring='accuracy', param_distributions=parameters, cv=2,
+                        n_iter = 7, refit = True, verbose = 3)
+    
+    #21.	Fit your training data to the gird search object
+    randSearch.fit(X_train_SMOTE, y_train_SMOTE)
+    #22.	Print out the best parameters
+    print(randSearch.best_params_)
+    
+    #23.	Print out the score of the model 
+    rand_score = randSearch.best_score_
+    print('The score of the model: ', rand_score)
+    
+    best_model = randSearch.best_estimator_
+    #24.	Printout the best estimator 
+    print(best_model)
+    
+    y_pred = best_model.predict(X_test_prepared)
+    
+    m_accuracy = accuracy_score(y_test, y_pred)
+    m_precision = precision_score(y_test, y_pred)
+    m_recall = recall_score(y_test, y_pred)
+    m_f1 = f1_score(y_test, y_pred)
+    m_cm = confusion_matrix(y_test, y_pred)
+    
+    return [m_accuracy, m_precision, m_recall, m_f1], m_cm, y_pred
+
+model_results = []
+for params in parameters:
+    classifier = params.pop('clf')
+    name = params.pop('name')
+    result, cm, y_pred_bm = runRandomizedSearch(classifier, params)
+    result.insert(0, name)
+    model_results.append(result)
+    plot_roc_curve(y_test, y_pred_bm, name)
+
+from tabulate import tabulate
+headers = ['Model','Accuracy', 'Precision', 'Recall', 'F1']
+print(tabulate(model_results, headers=headers, tablefmt="grid", numalign="center"))
