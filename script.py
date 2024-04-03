@@ -390,6 +390,7 @@ print("Non-Fatal: ", smote_df.value_counts()[0])
 ###################
 
 
+
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -408,6 +409,26 @@ for kernel in kernels:
     print('\n')
 
 #############################
+# Logistic Regression
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+# Initialize the Logistic Regression model
+log_reg = LogisticRegression(max_iter=1000)
+
+# Fit the model on the training data
+log_reg.fit(X_train_SMOTE, y_train_SMOTE)
+
+# Make predictions on the testing set
+y_pred_log_reg = log_reg.predict(X_test_prepared)
+
+# Evaluate the model
+print("Accuracy on test data: ", accuracy_score(y_test, y_pred_log_reg))
+print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred_log_reg))
+print("Classification Report:\n", classification_report(y_test, y_pred_log_reg))
+
+
+###############################
 
 from sklearn.ensemble import RandomForestClassifier
 
