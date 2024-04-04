@@ -447,6 +447,7 @@ print(f"Confusion Matrix: \n{cm}")
 ###Randomized Search
 from sklearn.metrics import precision_score, recall_score, f1_score, roc_auc_score, roc_curve
 from sklearn.tree import DecisionTreeClassifier
+
 parameters=[
     {
         'clf': SVC(),
@@ -454,6 +455,14 @@ parameters=[
         'C': [0.001],
         'kernel': ['poly'],
         'gamma':[1]
+    },
+    {
+        'clf': LogisticRegression(),
+        'name':'Logistic Regression',
+        'max_iter' : range(100, 500, 1000),
+        'warm_start' : [True, False],
+        'solver' : ['lbfgs', 'newton-cg', 'liblinear'],
+        'C' : np.arange(0, 1, 0.01),
     },
     {
         'clf': RandomForestClassifier(),
