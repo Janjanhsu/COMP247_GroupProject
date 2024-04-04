@@ -450,7 +450,7 @@ from sklearn.tree import DecisionTreeClassifier
 
 parameters=[
     {
-        'clf': SVC(),
+        'clf': SVC(probability=True),
         'name':'SVM',
         'C': [0.001],
         'kernel': ['poly'],
@@ -508,17 +508,18 @@ def runRandomizedSearch(clf, parameters):
     m_recall = recall_score(y_test, y_pred)
     m_f1 = f1_score(y_test, y_pred)
     m_cm = confusion_matrix(y_test, y_pred)
+    y_proba = best_model.predict_proba(X_test_prepared)
     
-    return [m_accuracy, m_precision, m_recall, m_f1], m_cm, y_pred
+    return [m_accuracy, m_precision, m_recall, m_f1], m_cm, y_proba
 
 model_results = []
 for params in parameters:
     classifier = params.pop('clf')
     name = params.pop('name')
-    result, cm, y_pred_bm = runRandomizedSearch(classifier, params)
+    result, cm, y_proba_bm = runRandomizedSearch(classifier, params)
     result.insert(0, name)
     model_results.append(result)
-    plot_roc_curve(y_test, y_pred_bm, name)
+    plot_roc_curve(y_test, y_proba_bm[:, 1], name)
 
 from tabulate import tabulate
 headers = ['Model','Accuracy', 'Precision', 'Recall', 'F1']
