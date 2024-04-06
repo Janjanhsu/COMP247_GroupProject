@@ -423,17 +423,35 @@ log_reg.fit(X_train_SMOTE, y_train_SMOTE)
 y_pred_log_reg = log_reg.predict(X_test_prepared)
 
 # Evaluate the model
+print("Model: Logistic Regression ")
 print("Accuracy on test data: ", accuracy_score(y_test, y_pred_log_reg))
 print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred_log_reg))
 print("Classification Report:\n", classification_report(y_test, y_pred_log_reg))
 
 
 ###############################
+#Decision Tree
+from sklearn.tree import DecisionTreeClassifier
 
+dt_Clf = DecisionTreeClassifier(criterion="gini", random_state=53, max_depth=3, min_samples_leaf=5)
+
+
+# Performing training
+dt_Clf.fit(X_train_SMOTE, y_train_SMOTE)
+
+y_pred_dt = dt_Clf.predict(X_test_prepared)
+
+print("Model: Decision Tree ")
+print("Accuracy on test data: ", accuracy_score(y_test, y_pred_dt))
+print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred_dt))
+print("Classification Report:\n", classification_report(y_test, y_pred_dt))
+
+
+###############################
 from sklearn.ensemble import RandomForestClassifier
 
 # Train model
-forestClf = RandomForestClassifier(random_state=123)
+forestClf = RandomForestClassifier(random_state=53)
 forestClf.fit(X_train_SMOTE, y_train_SMOTE)
 
 y_forest_pred_test = forestClf.predict(X_test_prepared)
@@ -446,7 +464,6 @@ print(f"Confusion Matrix: \n{cm}")
 
 ###Randomized Search
 from sklearn.metrics import precision_score, recall_score, f1_score, roc_auc_score, roc_curve
-from sklearn.tree import DecisionTreeClassifier
 
 parameters=[
     {
@@ -465,13 +482,21 @@ parameters=[
         'C' : np.arange(0, 1, 0.01),
     },
     {
+        'clf': DecisionTreeClassifier(),
+        'name':'Decision Tree',
+        'min_samples_split' : range(10,300,20),
+        'max_depth': range(1,30,2),
+        'min_samples_leaf':range(1,15,3)
+    },
+    {
         'clf': RandomForestClassifier(),
         'name':'Random Forest',
-        'n_estimators': [200, 500],
-        'criterion': ['gini','entropy'],
-        'max_features': ['auto', 'sqrt', 'log2'],
-        'max_depth' : [4,5,6,7,8]
-    }
+        'max_depth': [ 5, 10, 15, 20],
+        'max_features': [3, 5, 7, 11],
+        'min_samples_leaf': [20, 50, 100],
+        'n_estimators': [10, 25, 50],
+        'criterion': ['gini','entropy']
+    },
 ]
 
 from sklearn.model_selection import RandomizedSearchCV
