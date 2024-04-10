@@ -493,7 +493,7 @@ parameters=[
         'max_iter' : range(100, 500, 1000),
         'warm_start' : [True, False],
         'solver' : ['lbfgs', 'newton-cg', 'liblinear'],
-        'C' : np.arange(0, 1, 0.01),
+        'C' : np.arange(0, 1, 0.01)
     },
     {
         'clf': DecisionTreeClassifier(),
@@ -505,11 +505,11 @@ parameters=[
     {
         'clf': RandomForestClassifier(),
         'name':'Random Forest',
-        'max_depth': [ 5, 10, 15, 20, 25],
-        'max_features': [3, 5, 7, 11],
-        'min_samples_leaf': [2,3,5,10,15,20],
-        'min_samples_split':[2,3],
-        'n_estimators': [10, 25, 50],
+        'max_depth': range(1,100,1),
+        'max_features': range(1,100,1),
+        'min_samples_leaf': range(1,50,1),
+        'min_samples_split':range(1,30,1),
+        'n_estimators': range(1,30,1),
         'bootstrap': [True,False],
         'criterion': ['gini','entropy']
     },
@@ -520,7 +520,7 @@ parameters=[
         'activation': ['tanh', 'relu'],
         'solver': ['sgd', 'adam'],
         'alpha': [0.0001, 0.05],
-        'learning_rate': ['constant','adaptive'],
+        'learning_rate': ['constant','adaptive']
      }
 ]
 
