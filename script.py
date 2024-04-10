@@ -462,6 +462,20 @@ print("Accuracy for test data: ", accuracy_score(y_test, y_forest_pred_test))
 cm = confusion_matrix(y_test, y_forest_pred_test)
 print(f"Confusion Matrix: \n{cm}")
 
+########################
+#Neural network
+from sklearn.neural_network import MLPClassifier
+nnClf = MLPClassifier(solver='lbfgs', alpha=1e-5,
+                     hidden_layer_sizes=(5, 2), random_state=53)
+nnClf.fit(X_train_SMOTE, y_train_SMOTE)
+y_nn_pred_test = nnClf.predict(X_test_prepared)
+ 
+print("Model: Neural Network ")
+print("Accuracy for test data: ", accuracy_score(y_test, y_nn_pred_test))
+
+cm = confusion_matrix(y_test, y_nn_pred_test)
+print(f"Confusion Matrix: \n{cm}")
+
 ###Randomized Search
 from sklearn.metrics import precision_score, recall_score, f1_score, roc_auc_score, roc_curve
 
@@ -491,12 +505,23 @@ parameters=[
     {
         'clf': RandomForestClassifier(),
         'name':'Random Forest',
-        'max_depth': [ 5, 10, 15, 20],
+        'max_depth': [ 5, 10, 15, 20, 25],
         'max_features': [3, 5, 7, 11],
-        'min_samples_leaf': [20, 50, 100],
+        'min_samples_leaf': [2,3,5,10,15,20],
+        'min_samples_split':[2,3],
         'n_estimators': [10, 25, 50],
+        'bootstrap': [True,False],
         'criterion': ['gini','entropy']
     },
+    {
+        'clf': MLPClassifier(max_iter=100),
+        'name':'Neural Network',
+        'hidden_layer_sizes': [(10,30,10),(20,)],
+        'activation': ['tanh', 'relu'],
+        'solver': ['sgd', 'adam'],
+        'alpha': [0.0001, 0.05],
+        'learning_rate': ['constant','adaptive'],
+     }
 ]
 
 from sklearn.model_selection import RandomizedSearchCV
