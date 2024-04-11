@@ -481,11 +481,11 @@ from sklearn.metrics import precision_score, recall_score, f1_score, roc_auc_sco
 
 parameters=[
     {
-        'clf': SVC(probability=True),
+        'clf': SVC(),
         'name':'SVM',
-        'C': [0.001],
-        'kernel': ['poly'],
-        'gamma':[1]
+        'C': [0.001, 0.1, 1, 10],
+        'kernel': ['linear', 'rbf', 'poly', 'sigmoid'],
+        'gamma':[1,0.1,0.001]
     },
     {
         'clf': LogisticRegression(),
@@ -505,11 +505,11 @@ parameters=[
     {
         'clf': RandomForestClassifier(),
         'name':'Random Forest',
-        'max_depth': range(1,100,1),
-        'max_features': range(1,100,1),
-        'min_samples_leaf': range(1,50,1),
-        'min_samples_split':range(1,30,1),
-        'n_estimators': range(1,30,1),
+        'max_depth': [None, 5, 10, 20],
+        'max_features': [0.5, 0.7, 0.9],
+        'min_samples_leaf': [1, 2, 4],
+        'min_samples_split': [2, 5, 10],
+        'n_estimators': [100, 500, 1000],
         'bootstrap': [True,False],
         'criterion': ['gini','entropy']
     },
@@ -535,20 +535,48 @@ def plot_roc_curve(true_y, y_prob, name):
 
 def runRandomizedSearch(clf, parameters):
     randSearch = RandomizedSearchCV(estimator=clf,
-                        scoring='accuracy', param_distributions=parameters, cv=2,
+                        scoring='accuracy', param_distributions=parameters, cv=4,
                         n_iter = 7, refit = True, verbose = 3)
     
-    #21.	Fit your training data to the gird search object
     randSearch.fit(X_train_SMOTE, y_train_SMOTE)
-    #22.	Print out the best parameters
+    #Print out the best parameters
     print(randSearch.best_params_)
     
-    #23.	Print out the score of the model 
+    #Print out the score of the model 
     rand_score = randSearch.best_score_
     print('The score of the model: ', rand_score)
     
     best_model = randSearch.best_estimator_
-    #24.	Printout the best estimator 
+    #Printout the best estimator 
+    print(best_model)
+    
+    y_pred = best_model.predict(X_test_prepared)
+    
+    m_accuracy = accuracy_score(y_test, y_pred)
+    m_precision = precision_score(y_test, y_pred)
+    m_recall = recall_score(y_test, y_pred)
+    m_f1 = f1_score(y_test, y_pred)
+    m_cm = confusion_matrix(y_test, y_pred)
+    y_proba = best_model.predict_proba(X_test_prepared)
+    
+    return [m_accuracy, m_precision, m_recall, m_f1], m_cm, y_proba
+
+from sklearn.model_selection import GridSearchCV
+def runGridSearchCV(clf, parameters):
+    gridSearch = GridSearchCV(estimator=clf,
+                        scoring='accuracy', param_grid=parameters, cv=4,
+                        refit = True, verbose = 3)
+    
+    gridSearch.fit(X_train_SMOTE, y_train_SMOTE)
+    #Print out the best parameters
+    print(gridSearch.best_params_)
+    
+    #Print out the score of the model 
+    grid_score = gridSearch.best_score_
+    print('The score of the model: ', grid_score)
+    
+    best_model = gridSearch.best_estimator_
+    #Printout the best estimator 
     print(best_model)
     
     y_pred = best_model.predict(X_test_prepared)
@@ -563,14 +591,20 @@ def runRandomizedSearch(clf, parameters):
     return [m_accuracy, m_precision, m_recall, m_f1], m_cm, y_proba
 
 model_results = []
+cm_results={}
 for params in parameters:
     classifier = params.pop('clf')
     name = params.pop('name')
-    result, cm, y_proba_bm = runRandomizedSearch(classifier, params)
+    #result, cm, y_proba_bm = runRandomizedSearch(classifier, params)
+    result, cm, y_proba_bm = runGridSearchCV(classifier, params)
     result.insert(0, name)
     model_results.append(result)
     plot_roc_curve(y_test, y_proba_bm[:, 1], name)
+    cm_results[name] = cm
 
 from tabulate import tabulate
 headers = ['Model','Accuracy', 'Precision', 'Recall', 'F1']
 print(tabulate(model_results, headers=headers, tablefmt="grid", numalign="center"))
+
+for e in cm_results.keys():
+    print(e)
