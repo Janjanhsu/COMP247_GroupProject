@@ -143,7 +143,7 @@ plt.show()
 
 #WEEKDAY vs occurence of accidents
 weekday_ordered = [
-    'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'
+    'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
 ]
 
 plt.figure(figsize=(10, 5))
@@ -388,9 +388,10 @@ print("After SMOTE: ")
 print("Fatal: ", smote_df.value_counts()[1])
 print("Non-Fatal: ", smote_df.value_counts()[0])
 ###################
+import joblib
+joblib.dump(full_pipeline, "full_pipeline.pkl")
 
-
-
+#Part B
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -465,32 +466,40 @@ print(f"Confusion Matrix: \n{cm}")
 ########################
 #Neural network
 from sklearn.neural_network import MLPClassifier
-nnClf = MLPClassifier(solver='lbfgs', alpha=1e-5,
-                     hidden_layer_sizes=(5, 2), random_state=53)
+nnClf = MLPClassifier(hidden_layer_sizes=(100, 50, 25), 
+                       activation='relu',                           
+                       solver='adam', 
+                       alpha=0.001,  
+                       batch_size='auto', 
+                       learning_rate='adaptive', 
+                       learning_rate_init=0.001,  
+                       max_iter=500,  
+                       random_state=78,  
+                       verbose=True)
 nnClf.fit(X_train_SMOTE, y_train_SMOTE)
 y_nn_pred_test = nnClf.predict(X_test_prepared)
  
 print("Model: Neural Network ")
 print("Accuracy for test data: ", accuracy_score(y_test, y_nn_pred_test))
 
-cm = confusion_matrix(y_test, y_nn_pred_test)
-print(f"Confusion Matrix: \n{cm}")
+print("\nConfusion Matrix : \n", confusion_matrix(y_test, y_pred_test))
+print("\nClassification Report: \n", classification_report(y_test, y_pred_test))
 
 ###Randomized Search
 from sklearn.metrics import precision_score, recall_score, f1_score, roc_auc_score, roc_curve
 
 parameters=[
     {
-        'clf': SVC(),
+        'clf': SVC(probability=True),
         'name':'SVM',
         'C': [0.001, 0.1, 1, 10],
-        'kernel': ['linear', 'rbf', 'poly', 'sigmoid'],
+        'kernel': ['rbf'],
         'gamma':[1,0.1,0.001]
     },
     {
         'clf': LogisticRegression(),
         'name':'Logistic Regression',
-        'max_iter' : range(100, 500, 1000),
+        'max_iter' : range(100, 500, 100),
         'warm_start' : [True, False],
         'solver' : ['lbfgs', 'newton-cg', 'liblinear'],
         'C' : np.arange(0, 1, 0.01)
@@ -514,15 +523,17 @@ parameters=[
         'criterion': ['gini','entropy']
     },
     {
-        'clf': MLPClassifier(max_iter=100),
+        'clf': MLPClassifier(max_iter=1000),
         'name':'Neural Network',
-        'hidden_layer_sizes': [(10,30,10),(20,)],
-        'activation': ['tanh', 'relu'],
-        'solver': ['sgd', 'adam'],
-        'alpha': [0.0001, 0.05],
-        'learning_rate': ['constant','adaptive']
+        'hidden_layer_sizes': [(50,), (100, 50), (100, 50, 25)], 
+        'activation': ['tanh', 'relu'], 
+        'solver': ['lbfgs', 'adam'], 
+        'alpha': [0.0001, 0.001],  
+        'learning_rate': ['constant', 'adaptive']
      }
 ]
+import copy
+parameters_clone = copy.deepcopy(parameters)
 
 from sklearn.model_selection import RandomizedSearchCV
 def plot_roc_curve(true_y, y_prob, name):
@@ -532,23 +543,18 @@ def plot_roc_curve(true_y, y_prob, name):
     plt.xlabel('False Positive Rate')
     plt.ylabel('True Positive Rate')
     plt.legend(loc='lower right')
+    plt.show()
 
 def runRandomizedSearch(clf, parameters):
     randSearch = RandomizedSearchCV(estimator=clf,
-                        scoring='accuracy', param_distributions=parameters, cv=4,
-                        n_iter = 7, refit = True, verbose = 3)
+                        scoring='accuracy', param_distributions=parameters, cv=2,
+                        n_iter = 7, n_jobs=-1, refit = True, verbose = 3)
     
     randSearch.fit(X_train_SMOTE, y_train_SMOTE)
-    #Print out the best parameters
-    print(randSearch.best_params_)
     
-    #Print out the score of the model 
     rand_score = randSearch.best_score_
-    print('The score of the model: ', rand_score)
     
     best_model = randSearch.best_estimator_
-    #Printout the best estimator 
-    print(best_model)
     
     y_pred = best_model.predict(X_test_prepared)
     
@@ -559,25 +565,19 @@ def runRandomizedSearch(clf, parameters):
     m_cm = confusion_matrix(y_test, y_pred)
     y_proba = best_model.predict_proba(X_test_prepared)
     
-    return [m_accuracy, m_precision, m_recall, m_f1], m_cm, y_proba
+    return [m_accuracy, m_precision, m_recall, m_f1], m_cm, y_proba, (best_model, randSearch.best_params_)
 
 from sklearn.model_selection import GridSearchCV
 def runGridSearchCV(clf, parameters):
     gridSearch = GridSearchCV(estimator=clf,
-                        scoring='accuracy', param_grid=parameters, cv=4,
-                        refit = True, verbose = 3)
+                        scoring='accuracy', param_grid=parameters, cv=2,
+                        refit = True, n_jobs=-1, verbose = 3)
     
     gridSearch.fit(X_train_SMOTE, y_train_SMOTE)
-    #Print out the best parameters
-    print(gridSearch.best_params_)
     
-    #Print out the score of the model 
     grid_score = gridSearch.best_score_
-    print('The score of the model: ', grid_score)
     
     best_model = gridSearch.best_estimator_
-    #Printout the best estimator 
-    print(best_model)
     
     y_pred = best_model.predict(X_test_prepared)
     
@@ -588,23 +588,59 @@ def runGridSearchCV(clf, parameters):
     m_cm = confusion_matrix(y_test, y_pred)
     y_proba = best_model.predict_proba(X_test_prepared)
     
-    return [m_accuracy, m_precision, m_recall, m_f1], m_cm, y_proba
+    return [m_accuracy, m_precision, m_recall, m_f1], m_cm, y_proba, (best_model, gridSearch.best_params_)
 
-model_results = []
+###RandomizedSearch Output
+model_results = {}
+performance_results = []
 cm_results={}
 for params in parameters:
     classifier = params.pop('clf')
     name = params.pop('name')
-    #result, cm, y_proba_bm = runRandomizedSearch(classifier, params)
-    result, cm, y_proba_bm = runGridSearchCV(classifier, params)
+    result, cm, y_proba_bm, ai_model = runRandomizedSearch(classifier, params)
+    #result, cm, y_proba_bm, ai_model = runGridSearchCV(classifier, params)
     result.insert(0, name)
-    model_results.append(result)
+    performance_results.append(result)
     plot_roc_curve(y_test, y_proba_bm[:, 1], name)
     cm_results[name] = cm
+    model_results[name] = ai_model
+
+import joblib
+for k, v in model_results.items():
+    print(f'{k} - Best Parameters:\n {v[0]}')
+    filename = k.replace(" ", "_") +"_RS" +".pkl"
+    joblib.dump(v[1], filename)
 
 from tabulate import tabulate
 headers = ['Model','Accuracy', 'Precision', 'Recall', 'F1']
-print(tabulate(model_results, headers=headers, tablefmt="grid", numalign="center"))
+print(tabulate(performance_results, headers=headers, tablefmt="grid", numalign="center"))
 
-for e in cm_results.keys():
-    print(e)
+for k, v in cm_results.items():
+    print(f'{k} - Confusion Matrix:\n {v}')
+    
+###GridSearchCV Output
+model_results = {}
+performance_results = []
+cm_results={}
+for params in parameters_clone:
+    classifier = params.pop('clf')
+    name = params.pop('name')
+    result, cm, y_proba_bm, ai_model = runGridSearchCV(classifier, params)
+    result.insert(0, name)
+    performance_results.append(result)
+    plot_roc_curve(y_test, y_proba_bm[:, 1], name)
+    cm_results[name] = cm
+    model_results[name] = ai_model
+
+import joblib
+for k, v in model_results.items():
+    print(f'{k} - Best Parameters:\n {v[0]}')
+    filename = k.replace(" ", "_") +"_GS" +".pkl"
+    joblib.dump(v[1], filename)
+
+from tabulate import tabulate
+headers = ['Model','Accuracy', 'Precision', 'Recall', 'F1']
+print(tabulate(performance_results, headers=headers, tablefmt="grid", numalign="center"))
+
+for k, v in cm_results.items():
+    print(f'{k} - Confusion Matrix:\n {v}')
