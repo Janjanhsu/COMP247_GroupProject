@@ -400,7 +400,7 @@ from sklearn.metrics import accuracy_score, confusion_matrix
 kernels = ['linear', 'rbf', 'poly', 'sigmoid']
 
 for kernel in kernels:
-    clf = SVC(kernel=kernel, C=0.1 if kernel == 'linear' else 1.0).fit(X_train_prepared, y_train)
+    clf = SVC(kernel=kernel, C=0.1 if kernel == 'linear' else 1.0).fit(X_train_SMOTE, y_train_SMOTE)
     y_pred_train = clf.predict(X_train_prepared)
     y_pred_test = clf.predict(X_test_prepared)
     print(f"Kernel: {kernel} ")
