@@ -491,10 +491,9 @@ from sklearn.metrics import precision_score, recall_score, f1_score, roc_auc_sco
 
 parameters=[
     {
-        'clf': SVC(probability=True),
+        'clf': SVC(kernel='rbf', probability=True),
         'name':'SVM',
         'C': [0.001, 0.1, 1, 10],
-        'kernel': ['rbf'],
         'gamma':[1,0.1,0.001]
     },
     {
