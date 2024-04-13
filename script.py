@@ -462,6 +462,7 @@ print("Accuracy for test data: ", accuracy_score(y_test, y_forest_pred_test))
 
 cm = confusion_matrix(y_test, y_forest_pred_test)
 print(f"Confusion Matrix: \n{cm}")
+print("\nClassification Report: \n", classification_report(y_test, y_forest_pred_test))
 
 ########################
 #Neural network
@@ -482,8 +483,8 @@ y_nn_pred_test = nnClf.predict(X_test_prepared)
 print("Model: Neural Network ")
 print("Accuracy for test data: ", accuracy_score(y_test, y_nn_pred_test))
 
-print("\nConfusion Matrix : \n", confusion_matrix(y_test, y_pred_test))
-print("\nClassification Report: \n", classification_report(y_test, y_pred_test))
+print("\nConfusion Matrix : \n", confusion_matrix(y_test, y_nn_pred_test))
+print("\nClassification Report: \n", classification_report(y_test, y_nn_pred_test))
 
 ###Randomized Search
 from sklearn.metrics import precision_score, recall_score, f1_score, roc_auc_score, roc_curve
@@ -543,7 +544,6 @@ def plot_roc_curve(true_y, y_prob, name):
     plt.xlabel('False Positive Rate')
     plt.ylabel('True Positive Rate')
     plt.legend(loc='lower right')
-    plt.show()
 
 def runRandomizedSearch(clf, parameters):
     randSearch = RandomizedSearchCV(estimator=clf,
@@ -604,6 +604,7 @@ for params in parameters:
     plot_roc_curve(y_test, y_proba_bm[:, 1], name)
     cm_results[name] = cm
     model_results[name] = ai_model
+plt.show()
 
 import joblib
 for k, v in model_results.items():
@@ -631,6 +632,7 @@ for params in parameters_clone:
     plot_roc_curve(y_test, y_proba_bm[:, 1], name)
     cm_results[name] = cm
     model_results[name] = ai_model
+plt.show()
 
 import joblib
 for k, v in model_results.items():
