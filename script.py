@@ -607,9 +607,9 @@ plt.show()
 
 import joblib
 for k, v in model_results.items():
-    print(f'{k} - Best Parameters:\n {v[0]}')
+    print(f'{k} - Best Parameters:\n {v[1]}')
     filename = k.replace(" ", "_") +"_RS" +".pkl"
-    joblib.dump(v[1], filename)
+    joblib.dump(v[0], filename)
 
 from tabulate import tabulate
 headers = ['Model','Accuracy', 'Precision', 'Recall', 'F1']
@@ -635,9 +635,9 @@ plt.show()
 
 import joblib
 for k, v in model_results.items():
-    print(f'{k} - Best Parameters:\n {v[0]}')
+    print(f'{k} - Best Parameters:\n {v[1]}')
     filename = k.replace(" ", "_") +"_GS" +".pkl"
-    joblib.dump(v[1], filename)
+    joblib.dump(v[0], filename)
 
 from tabulate import tabulate
 headers = ['Model','Accuracy', 'Precision', 'Recall', 'F1']

@@ -14,21 +14,21 @@ def result():
     try:
         # Collect all form data
         form_data = {
-            'accloc': request.form['accloc'],
-            'drivact': request.form['drivact'],
-            'day': int(request.form['day']),
-            'district': request.form['district'],
-            'speeding': int(request.form['speeding']),
-            'invtype': request.form['invtype'],
-            'division': request.form['division'],
-            'pedestrian': int(request.form['pedestrian']),
-            'vehtype': request.form['vehtype'],
-            'drivcond': request.form['drivcond'],
-            'truck': int(request.form['truck']),
-            'impactype': request.form['impactype'],
-            'latitude': float(request.form['latitude']),
-            'longitude': float(request.form['longitude']),
-            'invage': float(request.form.get('invage', 0))  
+            'ACCLOC': request.form['accloc'],
+            'DRIVACT': request.form['drivact'],
+            'DAY': int(request.form['day']),
+            'DISTRICT': request.form['district'],
+            'SPEEDING': int(request.form['speeding']),
+            'INVTYPE': request.form['invtype'],
+            'DIVISION': request.form['division'],
+            'PEDESTRIAN': int(request.form['pedestrian']),
+            'VEHTYPE': request.form['vehtype'],
+            'DRIVCOND': request.form['drivcond'],
+            'TRUCK': int(request.form['truck']),
+            'IMPACTYPE': request.form['impactype'],
+            'LATITUDE': float(request.form['latitude']),
+            'LONGITUDE': float(request.form['longitude']),
+            'INVAGE': float(request.form.get('invage', 0))  
         }
 
         # Model selection based on user input
@@ -38,9 +38,10 @@ def result():
 
         # Prepare the data for prediction
         features = pd.DataFrame([form_data])  
-
+        pipeline = joblib.load('full_pipeline.pkl')
+        features_prepared = pipeline.transform(features)
         # Predict using the loaded model
-        prediction = model.predict(features)
+        prediction = model.predict(features_prepared)
         outcome = 'Fatal' if prediction[0] == 1 else 'Non-Fatal'
         
         # Render result template with prediction
