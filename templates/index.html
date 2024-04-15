@@ -4,6 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Traffic Collision Prediction</title>
+    <script type="text/javascript">
+        function sample1()
+        {
+            document.getElementById("accloc").value = 'At Intersection';
+            document.getElementById("drivact").value = 'Exceeding Speed Limit';
+            document.getElementById("day").value = '6';
+            document.getElementById("district").value = 'Toronto and East York';
+            document.getElementById("speeding").value = '1';
+            document.getElementById("invtype").value = 'Driver';
+            document.getElementById("division").value = 'D55';
+            document.getElementById("pedestrian").value = '0';
+            document.getElementById("vehtype").value = 'Taxi';
+            document.getElementById("drivcond").value = 'Normal';
+            document.getElementById("truck").value = '0';
+            document.getElementById("impactype").value = 'Angle';
+            document.getElementById("latitude").value = '43.699595';
+            document.getElementById("longitude").value = '-79.318797';
+            document.getElementById("invage").value = '50';
+            document.getElementById("modelSelection").value = 'Random_Forest_GS';
+        }
+        function sample2()
+        {
+            document.getElementById("accloc").value = 'At Intersection';
+            document.getElementById("drivact").value = 'Exceeding Speed Limit';
+            document.getElementById("day").value = '9';
+            document.getElementById("district").value = 'Etobicoke York';
+            document.getElementById("speeding").value = '0';
+            document.getElementById("invtype").value = 'Pedestrian';
+            document.getElementById("division").value = 'D33';
+            document.getElementById("pedestrian").value = '0';
+            document.getElementById("vehtype").value = 'Passenger Van';
+            document.getElementById("drivcond").value = 'Ability Impaired, Drugs';
+            document.getElementById("truck").value = '0';
+            document.getElementById("impactype").value = 'Angle';
+            document.getElementById("latitude").value = '43.699595';
+            document.getElementById("longitude").value = '-79.318797';
+            document.getElementById("invage").value = '60';
+            document.getElementById("modelSelection").value = 'Neural_Network_GS';
+        }
+    </script>
 </head>
 <body>
     <h1 style="text-align: center;">Predict Traffic Collision</h1>
@@ -51,7 +91,6 @@
             <option value="Scarborough">Scarborough</option>
             <option value="Etobicoke York">Etobicoke York</option>
             <option value="North York">North York</option>
-            <option value="Toronto East York">Toronto East York</option>
         </select><br><br>
 
         <label for="speeding">Speeding Indicator:</label><br>
@@ -209,8 +248,14 @@
             <option value="Neural_Network_GS">Neural Network (Grid Search)</option>            
         </select><br><br>
 
-        <button type="submit">Predict</button>
-        <button type="reset">Clear</button>
+        
+        
+        <br>
+        <table border='0'>
+        <tr><td><button type="submit">Predict</button></td><td><button type="reset">Clear</button></td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td><button type="button" onclick="sample1()">Sample1</button></td>
+        <td><button type="button" onclick="sample2()">Sample2</button></td></tr>
+        </table>
     </form>
 </body>
 </html>
