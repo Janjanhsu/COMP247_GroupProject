@@ -22,7 +22,6 @@
             document.getElementById("latitude").value = '43.699595';
             document.getElementById("longitude").value = '-79.318797';
             document.getElementById("invage").value = '50';
-            document.getElementById("modelSelection").value = 'Random_Forest_GS';
         }
         function sample2()
         {
@@ -41,7 +40,6 @@
             document.getElementById("latitude").value = '43.699595';
             document.getElementById("longitude").value = '-79.318797';
             document.getElementById("invage").value = '60';
-            document.getElementById("modelSelection").value = 'Neural_Network_GS';
         }
     </script>
     <style>
@@ -288,22 +286,9 @@
             <option value="Other">Other</option>
         </select><br><br>
 
-        <!-- Model selection dropdown -->
-        <label for="modelSelection">Choose a Prediction Model:</label><br>
-        <select id="modelSelection" name="modelSelection">
-            <option value="SVM_RS">SVM (Randomized Search)</option>
-            <option value="SVM_GS">SVM (Grid Search)</option>
-            <option value="Logistic_Regression_RS">Logistic Regression (Randomized Search)</option>
-            <option value="Logistic_Regression_GS">Logistic Regression (Grid Search)</option>
-            <option value="Random_Forest_RS">Random Forest (Randomized Search)</option>
-            <option value="Random_Forest_GS">Random Forest (Grid Search)</option>
-            <option value="Neural_Network_RS">Neural Network (Randomized Search)</option>
-            <option value="Neural_Network_GS">Neural Network (Grid Search)</option>         
-        </select><br><br>
-
         <br>
         <table border='0'>
-        <tr><td><button type="submit">Predict</button></td><td><button type="reset">Clear</button></td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <tr><td><button type="submit">Next</button></td><td><button type="reset">Clear</button></td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td><button type="button" onclick="sample1()">Sample1</button></td>
         <td><button type="button" onclick="sample2()">Sample2</button></td></tr>
         </table>

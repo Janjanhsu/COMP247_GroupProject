@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Result</title>
+        <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #007BFF;
+        }
+        form {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin: auto;
+            width: 90%;
+            max-width: 600px;
+        }
+        label {
+            display: block;
+            margin: 15px 0 5px;
+        }
+        input, select {
+            width: 90%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .button-group {
+            text-align: center;
+        }
+        .center {
+          margin-left: auto;
+          margin-right: auto;
+        }
+        table {
+          border-collapse: collapse; /* Make borders collapse into one */
+          width: 60%; /* Set table width to 100% of its container */
+          margin-bottom: 20px; /* Add some space after the table */
+          margin-left: auto;
+          margin-right: auto;
+        }
+
+        /* Style table cells */
+        th,
+        td {
+          padding: 10px; /* Add padding to cells */
+          border: 1px solid #ddd; /* Add a thin border to cells */
+          text-align: left; /* Align text to the left */
+        }
+
+        /* Style table headers */
+        th {
+          background-color: #f2f2f2; /* Add a light gray background to headers */
+          font-weight: bold; /* Make headers bold */
+        }
+
+        /* Add zebra striping for rows (optional) */
+        tr:nth-child(even) {
+          background-color: #f9f9f9; /* Add a lighter background to even rows */
+        }
+
+        /* Style the first row (optional) */
+        tr:first-child {
+          border-top: 2px solid #ddd; /* Add a thicker top border to the first row */
+        }
+
+        /* Style the last row (optional) */
+        tr:last-child {
+          border-bottom: 2px solid #ddd; /* Add a thicker bottom border to the last row */
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Prediction for Traffic Collision</h1>
+    <div style="text-align: center; margin-top: 20px;">
+        <p>Select a model for prediction:</p>
+        <table>
+        <tr>
+        <td>Randomized Search</td><td>Result</td>
+        </tr>
+        <tr>
+        <td><a href="/sel_models?modelSelection=SVM_RS">SVM</a></td>
+        <td>{% if predictions['SVM_RS'] == 1 %}Fatal💀
+            {% elif predictions['SVM_RS'] == 0 %}Non-Fatal🤕
+            {% endif %}
+        </td>
+        </tr>
+        <tr>
+        <td><a href="/sel_models?modelSelection=Logistic_Regression_RS">Logistic Regression</a></td>
+        <td>{% if predictions['Logistic_Regression_RS'] == 1 %}Fatal💀
+            {% elif predictions['Logistic_Regression_RS'] == 0 %}Non-Fatal🤕
+            {% endif %}
+        </td>
+        </tr>
+        <tr>
+        <td><a href="/sel_models?modelSelection=Random_Forest_RS">Random Forest</a></td>
+        <td>{% if predictions['Random_Forest_RS'] == 1 %}Fatal💀
+            {% elif predictions['Random_Forest_RS'] == 0 %}Non-Fatal🤕
+            {% endif %}
+        </td>
+        </tr>
+        <tr>
+        <td><a href="/sel_models?modelSelection=Neural_Network_RS">Neural Network</a></td>
+        <td>{% if predictions['Neural_Network_RS'] == 1 %}Fatal💀
+            {% elif predictions['Neural_Network_RS'] == 0 %}Non-Fatal🤕
+            {% endif %}
+        </td>
+        </tr>
+        <tr><td>Grid Search</td><td></td></tr>
+        <tr><td><a href="/sel_models?modelSelection=SVM_GS">SVM</a></td>
+        <td>{% if predictions['SVM_GS'] == 1 %}Fatal💀
+            {% elif predictions['SVM_GS'] == 0 %}Non-Fatal🤕
+            {% endif %}
+        </td>
+        </tr>
+        <tr><td><a href="/sel_models?modelSelection=Logistic_Regression_GS">Logistic Regression</a></td>
+        <td>{% if predictions['Logistic_Regression_GS'] == 1 %}Fatal💀
+            {% elif predictions['Logistic_Regression_GS'] == 0 %}Non-Fatal🤕
+            {% endif %}
+        </td>
+        </tr>
+        <tr><td><a href="/sel_models?modelSelection=Random_Forest_GS">Random Forest</a></td>
+        <td>{% if predictions['Random_Forest_GS'] == 1 %}Fatal💀
+            {% elif predictions['Random_Forest_GS'] == 0 %}Non-Fatal🤕
+            {% endif %}
+        </td>
+        </tr>
+        <tr><td><a href="/sel_models?modelSelection=Neural_Network_GS">Neural Network</a></td>
+        <td>{% if predictions['Neural_Network_GS'] == 1 %}Fatal💀
+            {% elif predictions['Neural_Network_GS'] == 0 %}Non-Fatal🤕
+            {% endif %}
+        </td>
+        </tr>
+        </table>
+        
+        <button onclick="window.location.href='/';">Make Another Prediction</button>
+    </div>
+</body>
+</html>
