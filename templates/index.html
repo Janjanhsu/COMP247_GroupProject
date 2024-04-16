@@ -44,6 +44,53 @@
             document.getElementById("modelSelection").value = 'Neural_Network_GS';
         }
     </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #007BFF;
+        }
+        form {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin: auto;
+            width: 90%;
+            max-width: 600px;
+        }
+        label {
+            display: block;
+            margin: 15px 0 5px;
+        }
+        input, select {
+            width: 90%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .button-group {
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
     <h1 style="text-align: center;">Predict Traffic Collision</h1>
@@ -242,10 +289,14 @@
         <!-- Model selection dropdown -->
         <label for="modelSelection">Choose a Prediction Model:</label><br>
         <select id="modelSelection" name="modelSelection">
-            <option value="Random_Forest_GS">Random Forest (Grid Search)</option>
-            <option value="Random_Forest_RS">Random Forest (Random Search)</option>
+            <option value="SVM_RS">SVM (Randomized Search)</option>
+            <option value="SVM_GS">SVM (Grid Search)</option>
+            <option value="Logistic_Regression_RS">Logistic Regression (Randomized Search)</option>
             <option value="Logistic_Regression_GS">Logistic Regression (Grid Search)</option>
-            <option value="Neural_Network_GS">Neural Network (Grid Search)</option>            
+            <option value="Random_Forest_RS">Random Forest (Randomized Search)</option>
+            <option value="Random_Forest_GS">Random Forest (Grid Search)</option>
+            <option value="Neural_Network_RS">Neural Network (Randomized Search)</option>
+            <option value="Neural_Network_GS">Neural Network (Grid Search)</option>         
         </select><br><br>
 
         
