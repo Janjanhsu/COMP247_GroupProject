@@ -50,6 +50,7 @@
             background-color: #f4f4f9;
             color: #333;
             padding: 20px;
+            font-size: 16px;
         }
         h1 {
             text-align: center;
@@ -62,11 +63,11 @@
             padding: 20px;
             margin: auto;
             width: 90%;
-            max-width: 600px;
+            max-width: 800px;
         }
         label {
             display: block;
-            margin: 15px 0 5px;
+            margin: 5px 0 5px;
         }
         input, select {
             width: 90%;
@@ -94,83 +95,25 @@
 </head>
 <body>
     <h1 style="text-align: center;">Predict Traffic Collision</h1>
-    <form action="/result" method="POST" style="margin: auto; width: 70%; padding: 10px;">
+    <form action="/result" method="POST">
         
-        <label for="accloc">Accident Location:</label><br>
-        <select id="accloc" name="accloc">
-            <option value="">Select a location</option>
-            <option value="At Intersection">At Intersection</option>
-            <option value="Intersection Related">Intersection Related</option>
-            <option value="Non Intersection">Non Intersection</option>
-            <option value="At/Near Private Drive">At/Near Private Drive</option>
-            <option value="Underpass or Tunnel">Underpass or Tunnel</option>
-            <option value="Private Driveway">Private Driveway</option>
-            <option value="Overpass or Bridge">Overpass or Bridge</option>
-            <option value="Trail">Trail</option>
-            <option value="Laneway">Laneway</option>            
-        </select><br><br>
-
-        <label for="drivact">Driver Action:</label><br>
-        <select id="drivact" name="drivact">
-            <option value="">Select an action</option>
-            <option value="Failed to Yield Right of Way">Failed to Yield Right of Way</option>
-            <option value="Disobeyed Traffic Control">Disobeyed Traffic Control</option>
-            <option value="Driving Properly">Driving Properly</option>
-            <option value="Improper Passing">Improper Passing</option>
-            <option value="Improper Turn">Improper Turn</option>
-            <option value="Exceeding Speed Limit">Exceeding Speed Limit</option>
-            <option value="Following too Close">Following too Close</option>
-            <option value="Lost control">Lost control</option>
-            <option value="Improper Lane Change">Improper Lane Change</option>
-            <option value="Speed too Fast For Condition">Speed too Fast For Condition</option>
-            <option value="Wrong Way on One Way Road">Wrong Way on One Way Road</option>
-            <option value="Speed too Slow">Speed too Slow</option>
-            <option value="Other">Other</option>
-        </select><br><br>
-
+        <h2 style="text-align: center;">Locale and Date</h2>
         <label for="day">Day of the Accident (1-31):</label><br>
-        <input type="number" id="day" name="day" min="1" max="31" required><br><br>
+        <input type="number" id="day" name="day" min="1" max="31" required><br><br> 
 
-        <label for="district">District:</label><br>        
+        <label for="latitude">Latitude:</label><br>
+        <input type="text" id="latitude" name="latitude" required><br><br> 
+
+        <label for="longitude">Longitude:</label><br>
+        <input type="text" id="longitude" name="longitude" required><br><br> 
+
+        <label for="district">District:</label><br>    
         <select id="district" name="district" required>
             <!-- <option value="">Select an action</option> -->
             <option value="Toronto and East York">Toronto and East York</option>
             <option value="Scarborough">Scarborough</option>
             <option value="Etobicoke York">Etobicoke York</option>
             <option value="North York">North York</option>
-        </select><br><br>
-
-        <label for="speeding">Speeding Indicator:</label><br>
-        <!-- <input type="number" id="speeding" name="speeding" min="0" max="1" required><br><br> -->
-        <select id="speeding" name="speeding" required>            
-            <option value="1">Yes</option>
-            <option value="0">No</option>
-        </select><br><br>
-        
-
-        <label for="invtype">Involved Party Type:</label><br>
-        <!-- <input type="text" id="invtype" name="invtype" required><br><br> -->
-        <select id="invtype" name="invtype" required>
-            <!-- <option value="">Select a condition</option> -->
-            <option value="Driver">Driver</option>
-            <option value="Pedestrian">Pedestrian</option>
-            <option value="Motorcycle Driver">Motorcycle Driver</option>
-            <option value="Passenger">Passenger</option>
-            <option value="Vehicle Owner">Vehicle Owner</option>
-            <option value="Cyclist">Cyclist</option>
-            <option value="Truck Driver">Truck Driver</option>
-            <option value="Motorcycle Passenger">Motorcycle Passenger</option>
-            <option value="Driver - Not Hit">Driver - Not Hit</option>
-            <option value="In-Line Skater">In-Line Skater</option>
-            <option value="Moped Driver">Moped Driver</option>
-            <option value="Wheelchair">Wheelchair</option>
-            <option value="Pedestrian - Not Hit">Pedestrian - Not Hit</option>
-            <option value="Trailer Owner">Trailer Owner</option>
-            <option value="Witness">Witness</option>
-            <option value="Cyclist Passenger">Cyclist Passenger</option>
-            <option value="Moped Passenger">Moped Passenger</option>
-            <option value="Other Property Owner">Other Property Owner</option>
-            <option value="Other">Other</option>
         </select><br><br>
 
         <label for="division">Police Division:</label><br>
@@ -194,13 +137,39 @@
             <option value="D53">D53</option>
             <option value="D55">D55</option>
             <option value="NSA">NSA</option>
+        </select><br><br>       
+
+        <label for="accloc">Accident Location:</label><br>
+        <select id="accloc" name="accloc">
+            <option value="">Select a location</option>
+            <option value="At Intersection">At Intersection</option>
+            <option value="Intersection Related">Intersection Related</option>
+            <option value="Non Intersection">Non Intersection</option>
+            <option value="At/Near Private Drive">At/Near Private Drive</option>
+            <option value="Underpass or Tunnel">Underpass or Tunnel</option>
+            <option value="Private Driveway">Private Driveway</option>
+            <option value="Overpass or Bridge">Overpass or Bridge</option>
+            <option value="Trail">Trail</option>
+            <option value="Laneway">Laneway</option>            
         </select><br><br>
 
-        <label for="pedestrian">Pedestrian Indicator:</label><br>
-        <!-- <input type="number" id="pedestrian" name="pedestrian" min="0" max="1" required><br><br> -->
-        <select id="pedestrian" name="pedestrian" required>            
-            <option value="1">Yes</option>
-            <option value="0">No</option>
+        <h2 style="text-align: center;">Subject</h2>
+        <label for="drivact">Driver Action:</label><br>
+        <select id="drivact" name="drivact">
+            <option value="">Select an action</option>
+            <option value="Failed to Yield Right of Way">Failed to Yield Right of Way</option>
+            <option value="Disobeyed Traffic Control">Disobeyed Traffic Control</option>
+            <option value="Driving Properly">Driving Properly</option>
+            <option value="Improper Passing">Improper Passing</option>
+            <option value="Improper Turn">Improper Turn</option>
+            <option value="Exceeding Speed Limit">Exceeding Speed Limit</option>
+            <option value="Following too Close">Following too Close</option>
+            <option value="Lost control">Lost control</option>
+            <option value="Improper Lane Change">Improper Lane Change</option>
+            <option value="Speed too Fast For Condition">Speed too Fast For Condition</option>
+            <option value="Wrong Way on One Way Road">Wrong Way on One Way Road</option>
+            <option value="Speed too Slow">Speed too Slow</option>
+            <option value="Other">Other</option>
         </select><br><br>
 
         <label for="vehtype">Vehicle Type:</label><br>
@@ -238,6 +207,13 @@
             <option value="Other">Other</option>
         </select><br><br>
 
+        <label for="speeding">Speeding Indicator:</label><br>
+        <!-- <input type="number" id="speeding" name="speeding" min="0" max="1" required><br><br> -->
+        <select id="speeding" name="speeding" required>            
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+        </select><br><br>
+
         <label for="drivcond">Driver Condition:</label><br>
         <select id="drivcond" name="drivcond">
             <option value="">Select a condition</option>
@@ -252,8 +228,44 @@
             <option value="Fatigue">Fatigue</option>            
             <option value="Other">Other</option>
         </select><br><br>
+        
+        <h2 style="text-align: center;">Conditions</h2>
+        <label for="invtype">Involved Party Type:</label><br>
+        <!-- <input type="text" id="invtype" name="invtype" required><br><br> -->
+        <select id="invtype" name="invtype" required>
+            <!-- <option value="">Select a condition</option> -->
+            <option value="Driver">Driver</option>
+            <option value="Pedestrian">Pedestrian</option>
+            <option value="Motorcycle Driver">Motorcycle Driver</option>
+            <option value="Passenger">Passenger</option>
+            <option value="Vehicle Owner">Vehicle Owner</option>
+            <option value="Cyclist">Cyclist</option>
+            <option value="Truck Driver">Truck Driver</option>
+            <option value="Motorcycle Passenger">Motorcycle Passenger</option>
+            <option value="Driver - Not Hit">Driver - Not Hit</option>
+            <option value="In-Line Skater">In-Line Skater</option>
+            <option value="Moped Driver">Moped Driver</option>
+            <option value="Wheelchair">Wheelchair</option>
+            <option value="Pedestrian - Not Hit">Pedestrian - Not Hit</option>
+            <option value="Trailer Owner">Trailer Owner</option>
+            <option value="Witness">Witness</option>
+            <option value="Cyclist Passenger">Cyclist Passenger</option>
+            <option value="Moped Passenger">Moped Passenger</option>
+            <option value="Other Property Owner">Other Property Owner</option>
+            <option value="Other">Other</option>
+        </select><br><br>
 
-        <label for="truck">Truck Involvement (0 for No, 1 for Yes):</label><br>
+        <label for="invage">Involved Party Age:</label><br>
+        <input type="number" id="invage" name="invage"><br><br>
+
+        <label for="pedestrian">Pedestrian Involvement:</label><br>
+        <!-- <input type="number" id="pedestrian" name="pedestrian" min="0" max="1" required><br><br> -->
+        <select id="pedestrian" name="pedestrian" required>            
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+        </select><br><br>
+
+        <label for="truck">Truck Involvement:</label><br>
         <!-- <input type="number" id="truck" name="truck" min="0" max="1" required><br><br> -->
         <select id="truck" name="truck" required>            
             <option value="1">Yes</option>
@@ -276,16 +288,6 @@
             <option value="Other">Other</option>
         </select><br><br>
 
-
-        <label for="latitude">Latitude:</label><br>
-        <input type="text" id="latitude" name="latitude" required><br><br>
-
-        <label for="longitude">Longitude:</label><br>
-        <input type="text" id="longitude" name="longitude" required><br><br>
-
-        <label for="invage">Involved Party Age:</label><br>
-        <input type="number" id="invage" name="invage"><br><br>
-
         <!-- Model selection dropdown -->
         <label for="modelSelection">Choose a Prediction Model:</label><br>
         <select id="modelSelection" name="modelSelection">
@@ -299,8 +301,6 @@
             <option value="Neural_Network_GS">Neural Network (Grid Search)</option>         
         </select><br><br>
 
-        
-        
         <br>
         <table border='0'>
         <tr><td><button type="submit">Predict</button></td><td><button type="reset">Clear</button></td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
