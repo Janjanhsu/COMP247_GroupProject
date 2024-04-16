@@ -20,14 +20,10 @@ def step2_sel_models():
     if 'pred_results' in session:
         pred_results_str = session['pred_results']
         pred_results = eval(pred_results_str)
-        print('yess')
     else:
         pred_results = {}
-        print('yess nonon')
     # Model selection based on user input
     model_selection = request.args['modelSelection']
-    if (model_selection==None):
-        print('999')
     model_path = f"{model_selection}.pkl"
     model = joblib.load(model_path)
     # Prepare the data for prediction
