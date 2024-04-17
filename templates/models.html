@@ -113,6 +113,12 @@
             {% elif predictions['Logistic_Regression_RS'] == 0 %}Non-Fatal🤕
             {% endif %}
         </td>
+        <tr><td><a href="/sel_models?modelSelection=Decision_Tree_RS">Decision Tree</a></td>
+            <td>{% if predictions['Decision_Tree_RS'] == 1 %}Fatal💀
+                {% elif predictions['Decision_Tree_RS'] == 0 %}Non-Fatal🤕
+                {% endif %}
+            </td>
+        </tr>
         </tr>
         <tr>
         <td><a href="/sel_models?modelSelection=Random_Forest_RS">Random Forest</a></td>
@@ -140,6 +146,12 @@
             {% elif predictions['Logistic_Regression_GS'] == 0 %}Non-Fatal🤕
             {% endif %}
         </td>
+        <tr><td><a href="/sel_models?modelSelection=Decision_Tree_GS">Decision Tree</a></td>
+            <td>{% if predictions['Decision_Tree_GS'] == 1 %}Fatal💀
+                {% elif predictions['Decision_Tree_GS'] == 0 %}Non-Fatal🤕
+                {% endif %}
+            </td>
+        </tr>
         </tr>
         <tr><td><a href="/sel_models?modelSelection=Random_Forest_GS">Random Forest</a></td>
         <td>{% if predictions['Random_Forest_GS'] == 1 %}Fatal💀
